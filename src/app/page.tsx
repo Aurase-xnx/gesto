@@ -9,9 +9,9 @@ export default async function Home() {
   const hello = await api.post.hello.query({ text: "from tRPC" });
 
   return (
-    <main className="mx-10 mb-10 flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container mx-5 flex-1 items-center justify-center bg-white">
-        <h1 className="text-green-700">VIDEO DEMO</h1>
+    <main className="flex min-h-screen flex-col items-center justify-center  text-white">
+      <div>
+        <h1>Home page</h1>
       </div>
     </main>
   );

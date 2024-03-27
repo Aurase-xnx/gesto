@@ -4,7 +4,7 @@ export default function Header() {
   return (
     <header className="navbar">
       <div className="flex-1">
-        <Link className="px-2 text-2xl font-semibold" href="/">
+        <Link className="px-2 text-2xl font-semibold text-[#a6f7a6]" href="/">
           Gesto
         </Link>
       </div>
