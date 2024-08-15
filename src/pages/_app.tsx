@@ -6,6 +6,7 @@ import { type AppType } from "next/app";
 import { api } from "$/utils/api";
 
 import "$/styles/globals.css";
+import Navbar from "$/lib/components/Navbar";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -13,7 +14,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <div className={GeistSans.className}>
+        <Navbar />
+      <div className="font-sans ${inter.variable} bg-gradient-to-b from-[#1d232a] to-[#a6f7a6] h-screen w-full">
         <Component {...pageProps} />
       </div>
     </SessionProvider>
