@@ -15,7 +15,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
         <Navbar />
-      <div className={GeistSans.className}>
+      <div className="font-sans ${inter.variable} bg-gradient-to-b from-[#1d232a] to-[#a6f7a6] h-screen w-full">
         <Component {...pageProps} />
       </div>
     </SessionProvider>
