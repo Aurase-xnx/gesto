@@ -60,6 +60,18 @@ model User {
   accounts      Account[]
   sessions      Session[]
   posts         Post[]
+  Restaurant    Restaurant[]
+}
+
+model Restaurant {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String
+  phone     String
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
