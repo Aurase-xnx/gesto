@@ -1,3 +1,4 @@
+import { api } from '$/utils/api';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -17,33 +18,7 @@ const Profile = () => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setError(null);
-
-        try {
-            const response = await fetch('/api/restaurant/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to create restaurant');
-            }
-
-            alert('Restaurant created successfully!');
-            setShowForm(false);
-        } catch (err) {
-            if (err instanceof Error) {
-                setError(err.message);
-            } else {
-                setError('An unexpected error occurred');
-            }
-        }
-    };
+    const {data: createdRestaurant, mutate: createRestaurant} = api.restaurant.create.useMutation();
 
     if (!session) {
         return (
@@ -68,65 +43,62 @@ const Profile = () => {
                     I own a restaurant
                 </button>
             ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                            Restaurant Name:
-                        </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            className="mt-1 p-2 border border-gray-300 rounded w-full"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="address" className="block text-sm font-medium text-gray-700">
-                            Address:
-                        </label>
-                        <input
-                            type="text"
-                            id="address"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                            className="mt-1 p-2 border border-gray-300 rounded w-full"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                            Phone:
-                        </label>
-                        <input
-                            type="text"
-                            id="phone"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            className="mt-1 p-2 border border-gray-300 rounded w-full"
-                            required
-                        />
-                    </div>
-                    <div className="flex space-x-4">
-                        <button
-                            type="submit"
-                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                        >
+                <>
+                        <div>
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                                Restaurant Name:
+                            </label>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                className="mt-1 p-2 border border-gray-300 rounded w-full"
+                                required />
+                        </div>
+                        <div>
+                            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+                                Address:
+                            </label>
+                            <input
+                                type="text"
+                                id="address"
+                                name="address"
+                                value={formData.address}
+                                onChange={handleChange}
+                                className="mt-1 p-2 border border-gray-300 rounded w-full"
+                                required />
+                        </div>
+                        <div>
+                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+                                Phone:
+                            </label>
+                            <input
+                                type="text"
+                                id="phone"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                className="mt-1 p-2 border border-gray-300 rounded w-full"
+                                required />
+                        </div>
+                        <div className="flex space-x-4">
+
+                            
+                        </div><button
+                        onClick={() => createRestaurant(formData)}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    >
                             Confirm
                         </button>
                         <button
-                            type="button"
-                            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-                            onClick={() => setShowForm(false)}
-                        >
+                        type="button"
+                        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                        onClick={() => setShowForm(false)}
+                    >
                             Cancel
-                        </button>
-                    </div>
-                </form>
+                        </button></>
             )}
 
             {error && <p className="mt-4 text-red-600">{error}</p>}

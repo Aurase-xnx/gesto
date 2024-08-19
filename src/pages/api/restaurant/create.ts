@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getSession, GetSessionParams } from 'next-auth/react';
+import {getSession, GetSessionParams, useSession} from 'next-auth/react';
 import { prisma } from '$/lib/prisma';
 
 type RestaurantCreateBody = {
@@ -8,8 +8,11 @@ type RestaurantCreateBody = {
     phone: string;
 };
 
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getSession({ req } as GetSessionParams);
+    console.log("Creating restaurant endpoint")
+
+    const session = useSession();
 
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method Not Allowed' });
@@ -26,6 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
+
         const restaurant = await prisma.restaurant.create({
             data: {
                 name,
