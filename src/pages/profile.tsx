@@ -1,10 +1,10 @@
 import { api } from '$/utils/api';
+import { Restaurant } from '@prisma/client';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
 const Profile = () => {
     const { data: session } = useSession();
-    console.log(session?.user)
     const [formData, setFormData] = useState({
         name: '',
         address: '',
@@ -19,6 +19,25 @@ const Profile = () => {
     };
 
     const {data: createdRestaurant, mutate: createRestaurant} = api.restaurant.create.useMutation();
+    const {data: updatedOwner, mutate: updateOwner} = api.user.updateRoleToOwner.useMutation();
+
+
+    type Restaurant = {
+        name: string;
+        address: string;
+        phone: string;
+    };
+
+    const handleCreateRestaurant = async (data: Restaurant) => {
+        try {
+            const response = createRestaurant(data);
+            if (createdRestaurant) {
+                updateOwner({id: session?.user?.id!});
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     if (!session) {
         return (
@@ -87,7 +106,7 @@ const Profile = () => {
 
                             
                         </div><button
-                        onClick={() => createRestaurant(formData)}
+                        onClick={() => handleCreateRestaurant(formData)}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                     >
                             Confirm
