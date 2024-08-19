@@ -28,6 +28,15 @@ export const restaurantRouter = createTRPCRouter({
                 },
             });
         }),
+        
+        getAllByOwner: protectedProcedure
+        .query(async ({ ctx }) => {
+            return ctx.db.restaurant.findMany({
+                where: {
+                    ownerId: ctx.session.user.id,
+                },
+            });
+        }),
 
 
 });

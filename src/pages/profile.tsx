@@ -20,9 +20,11 @@ const Profile = () => {
 
     const {data: createdRestaurant, mutate: createRestaurant} = api.restaurant.create.useMutation();
     const {data: updatedOwner, mutate: updateOwner} = api.user.updateRoleToOwner.useMutation();
-
+    const {data: getRestaurantsByOwner} = api.restaurant.getAllByOwner.useQuery();
+    console.log("Restooo",getRestaurantsByOwner);
 
     type Restaurant = {
+        id: number;
         name: string;
         address: string;
         phone: string;
@@ -121,7 +123,22 @@ const Profile = () => {
             )}
 
             {error && <p className="mt-4 text-red-600">{error}</p>}
+
+            {getRestaurantsByOwner ? (
+                            <div className="grid grid-cols-1 gap-4">
+                                {getRestaurantsByOwner.map((restaurant: Restaurant) => (
+                                    <div key={restaurant.id}>
+                                        <h2>{restaurant.name}</h2>
+                                        <p>{restaurant.address}</p>
+                                        <p>{restaurant.phone}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p>No restaurants found.</p>
+                        )}
         </div>
+
     );
 };
 
