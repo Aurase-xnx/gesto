@@ -5,6 +5,7 @@ import {
     protectedProcedure,
     publicProcedure,
 } from "$/server/api/trpc";
+import { get } from "http";
 
 export const restaurantRouter = createTRPCRouter({
 
@@ -28,7 +29,23 @@ export const restaurantRouter = createTRPCRouter({
                 },
             });
         }),
-        
+
+        getAll: publicProcedure
+        .query(async ({ ctx }) => {
+            return ctx.db.restaurant.findMany();
+        }
+        ),
+
+        getOne: publicProcedure
+        .query(async ({ ctx, input }) => {
+            return ctx.db.restaurant.findUnique({
+                where: {
+                    id: input.id,  
+                },
+            });
+        }
+        ),
+
         getAllByOwner: protectedProcedure
         .query(async ({ ctx }) => {
             return ctx.db.restaurant.findMany({

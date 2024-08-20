@@ -50,16 +50,7 @@ const Navbar = () => {
                                         Restaurants
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link href="/about" className="block px-2 py-2 text-white hover:bg-gray-600 rounded">
-                                        About
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/contact" className="block px-2 py-2 text-white hover:bg-gray-600 rounded">
-                                        Contact
-                                    </Link>
-                                </li>
+                            
                                 <li>
                                     {session ? (
                                         <>
@@ -99,12 +90,6 @@ const Navbar = () => {
                     </Link>
                     <Link href="/restaurants" className="text-white hover:bg-gray-600 hover:text-[#a6f7a6] transition duration-300 ease-in-out px-2 py-1 rounded">
                         Restaurants
-                    </Link>
-                    <Link href="/about" className="text-white hover:bg-gray-600 hover:text-[#a6f7a6] transition duration-300 ease-in-out px-2 py-1 rounded">
-                        About
-                    </Link>
-                    <Link href="/contact" className="text-white hover:bg-gray-600 hover:text-[#a6f7a6] transition duration-300 ease-in-out px-2 py-1 rounded">
-                        Contact
                     </Link>
                     {session ? (
                         <>
