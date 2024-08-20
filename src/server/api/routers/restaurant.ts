@@ -43,6 +43,7 @@ export const restaurantRouter = createTRPCRouter({
                     id: input.id,
                 },
             });
+        }
         ),
 
         getAllByOwner: protectedProcedure
