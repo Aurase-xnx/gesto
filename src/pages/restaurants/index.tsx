@@ -1,7 +1,4 @@
-//page to have all the restaurants listed 
-
-import { useEffect, useState } from 'react';
-import RestaurantCard from '$/lib/components/restaurants/restaurantCard';
+import RestaurantCard from '$/lib/components/restaurants/RestaurantCard';
 import { api } from '$/utils/api';
 import Head from 'next/head';
 

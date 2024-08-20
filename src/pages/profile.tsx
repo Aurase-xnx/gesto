@@ -1,3 +1,5 @@
+import RestaurantCard from '$/lib/components/restaurants/RestaurantCard';
+import RestaurantOwnerCard from '$/lib/components/restaurants/RestaurantOwnerCard';
 import { api } from '$/utils/api';
 import { Restaurant } from '@prisma/client';
 import { useSession } from 'next-auth/react';
@@ -125,13 +127,13 @@ const Profile = () => {
             {error && <p className="mt-4 text-red-600">{error}</p>}
 
             {getRestaurantsByOwner ? (
-                            <div className="grid grid-cols-1 gap-4">
+                            <div className="grid grid-cols-1 gap-4 bg-white p-2 my-3 mx-4 rounded-xl w-1/2">
                                 {getRestaurantsByOwner.map((restaurant: Restaurant) => (
-                                    <div key={restaurant.id}>
-                                        <h2>{restaurant.name}</h2>
-                                        <p>{restaurant.address}</p>
-                                        <p>{restaurant.phone}</p>
-                                    </div>
+                                    <RestaurantOwnerCard 
+                                    key={restaurant.id}
+                                    name={restaurant.name}
+                                    address={restaurant.address}
+                                    phoneNumber={restaurant.phone}/>
                                 ))}
                             </div>
                         ) : (

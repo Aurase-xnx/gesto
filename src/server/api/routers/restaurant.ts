@@ -40,10 +40,9 @@ export const restaurantRouter = createTRPCRouter({
         .query(async ({ ctx, input }) => {
             return ctx.db.restaurant.findUnique({
                 where: {
-                    id: input.id,  
+                    id: input.id,
                 },
             });
-        }
         ),
 
         getAllByOwner: protectedProcedure
