@@ -3,24 +3,31 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 
 export default function Restaurant() {
-    const {query} = useRouter();
-    const restaurantId = query;
-    console.log("Restaurantid",query);
-    const { data: sessionData } = useSession();
-    const { data: getOneRestaurant } = api.restaurant.getOne.useQuery({id: restaurantId});
+    const router = useRouter();
+
+    // Safely parse the id from the query params
+    const idParam = router.query.id;
+
+    // If the id is undefined or an array, handle that case
+    if (typeof idParam !== 'string') {
+        return <div>Error: Invalid restaurant ID</div>;
+    }
+
+    const id = parseInt(idParam, 10); // Convert the id to a number
+    const { data: restaurant, error, isLoading } = api.restaurant.getRestaurantById.useQuery({ id });
 
     return (
-        <div>
-            <h1>Restaurant</h1>
+        <div className="p-20">
+            <h1>Restaurant's details</h1>
             <div>
-                {getOneRestaurant ? (
+                {restaurant ? (
                     <div>
-                        <h2>{getOneRestaurant.name}</h2>
-                        <p>{getOneRestaurant.address}</p>
-                        <p>{getOneRestaurant.phone}</p>
+                        <h2>{restaurant.name}</h2>
+                        <p>{restaurant.address}</p>
+                        <p>{restaurant.phone}</p>
                     </div>
                 ) : (
-                    <p>Loading restaurant...</p>
+                    <p>{id}</p>
                 )}
                 </div>
         </div>

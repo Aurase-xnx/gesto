@@ -12,6 +12,7 @@ export const restaurantRouter = createTRPCRouter({
     create: protectedProcedure
         .input(
             z.object({
+                id: z.number(),
                 name: z.string().min(1),
                 address: z.string().min(1),
                 phone: z.string().min(1),
@@ -36,15 +37,42 @@ export const restaurantRouter = createTRPCRouter({
         }
         ),
 
-        getOne: publicProcedure
-        .query(async ({ ctx, input }) => {
-            return ctx.db.restaurant.findUnique({
-                where: {
-                    id: input.id,
-                },
-            });
-        }
-        ),
+        getRestaurantById: publicProcedure
+    .input(z.object({ id: z.number() })) // Validate that id is a number
+    .query(async ({ input, ctx }) => {
+      const restaurant = await ctx.db.restaurant.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!restaurant) {
+        throw new Error("Restaurant not found");
+      }
+
+      return restaurant;
+    }),
+
+    updateRestaurantById: protectedProcedure
+    .input(
+        z.object({
+            id: z.number(),
+            name: z.string().min(1),
+            address: z.string().min(1),
+            phone: z.string().min(1),
+            }),
+        )
+
+    .mutation(async ({ ctx, input }) => {
+        return ctx.db.restaurant.update({
+            where: { id: input.id },
+            data: {
+                id: input.id,
+                name: input.name,
+                address: input.address,
+                phone: input.phone,
+            },
+        });
+    }
+    ),
 
         getAllByOwner: protectedProcedure
         .query(async ({ ctx }) => {

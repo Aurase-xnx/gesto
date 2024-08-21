@@ -74,17 +74,30 @@ model Bookings {
   updatedAt    DateTime   @updatedAt
 }
 
+model inventoryItems {
+  id           Int        @id @default(autoincrement())
+  name         String
+  description  String
+  quantity     Int
+  price        Float
+  restaurantId Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+}
+
 model Restaurant {
-  id        Int        @id @default(autoincrement())
-  name      String
-  address   String
-  phone     String
-  owner     User       @relation(fields: [ownerId], references: [id])
-  ownerId   String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  menuItems MenuItem[]
-  bookings  Bookings[]
+  id             Int              @id @default(autoincrement())
+  name           String
+  address        String
+  phone          String
+  owner          User             @relation(fields: [ownerId], references: [id])
+  ownerId        String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  menuItems      MenuItem[]
+  bookings       Bookings[]
+  inventoryItems inventoryItems[]
 }
 
 model VerificationToken {

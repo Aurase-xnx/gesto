@@ -126,7 +126,11 @@ const Profile = () => {
 
             {error && <p className="mt-4 text-red-600">{error}</p>}
 
-            {getRestaurantsByOwner ? (
+<div>
+                
+                <div className='flex flex-col items-center'>
+                <h2 className="text-2xl font-bold mt-8 mb-4">My Restaurants</h2>
+                {getRestaurantsByOwner ? (
                             <div className="grid grid-cols-1 gap-4 bg-white p-2 my-3 mx-4 rounded-xl w-1/2">
                                 {getRestaurantsByOwner.map((restaurant: Restaurant) => (
                                     <RestaurantOwnerCard 
@@ -139,6 +143,9 @@ const Profile = () => {
                         ) : (
                             <p>No restaurants found.</p>
                         )}
+                </div>
+</div>
+            
         </div>
 
     );
