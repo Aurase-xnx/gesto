@@ -23,7 +23,6 @@ const Profile = () => {
     const {data: createdRestaurant, mutate: createRestaurant} = api.restaurant.create.useMutation();
     const {data: updatedOwner, mutate: updateOwner} = api.user.updateRoleToOwner.useMutation();
     const {data: getRestaurantsByOwner} = api.restaurant.getAllByOwner.useQuery();
-    console.log("Restooo",getRestaurantsByOwner);
 
     type Restaurant = {
         id: number;

@@ -10,7 +10,6 @@ type RestaurantCreateBody = {
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log("Creating restaurant endpoint")
 
     const session = useSession();
 
