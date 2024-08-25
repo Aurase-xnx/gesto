@@ -99,5 +99,11 @@ export const categoriesRouter = createTRPCRouter({
         });
     }),
     
-    
+    getCategoryByRestaurant: protectedProcedure
+    .input(z.object({ restaurantId: z.number() }))
+    .query(async ({ input, ctx }) => {
+        return ctx.db.category.findMany({
+            where: { restaurant: { id: input.restaurantId } },
+        });
+    }),
 });

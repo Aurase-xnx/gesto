@@ -106,60 +106,51 @@ model Bookings {
 
 // Models for the restaurant menu and inventory
 
-model InventoryItems {
-  id           Int        @id @default(autoincrement())
-  name         String
-  description  String?
-  quantity     Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-  restaurantId Int
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @default(now()) @updatedAt
-
-  categoryId Int?
-  category   Category? @relation(fields: [categoryId], references: [id])
-
-  typeId Int?
-  type   CategoryType? @relation(fields: [typeId], references: [id])
+model MenuItems {
+  id             Int          @id @default(autoincrement())
+  name           String
+  description    String?
+  price          Float
+  restaurant     Restaurant   @relation(fields: [restaurantId], references: [id])
+  restaurantId   Int
+  category       Category     @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+  categoryType   CategoryType @relation(fields: [categoryTypeId], references: [id])
+  categoryTypeId Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
 }
 
-model MenuItems {
-  id           Int        @id @default(autoincrement())
-  name         String
-  description  String?
-  price        Float
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-  restaurantId Int
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @default(now()) @updatedAt
-
-  categoryId Int?
-  category   Category? @relation(fields: [categoryId], references: [id])
-
-  typeId Int?
-  type   CategoryType? @relation(fields: [typeId], references: [id])
+model InventoryItems {
+  id             Int          @id @default(autoincrement())
+  name           String
+  description    String?
+  price          Float
+  restaurant     Restaurant   @relation(fields: [restaurantId], references: [id])
+  restaurantId   Int
+  category       Category     @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+  categoryType   CategoryType @relation(fields: [categoryTypeId], references: [id])
+  categoryTypeId Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @default(now()) @updatedAt
 }
 
 model Category {
-  id            Int            @id @default(autoincrement())
-  name          String
-  restaurantId  Int
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @default(now()) @updatedAt
-  restaurant    Restaurant     @relation(fields: [restaurantId], references: [id])
-  categoryTypes CategoryType[] @relation("CategoryToCategoryType")
-
-  MenuItems MenuItems[]
-
-  InventoryItems InventoryItems[]
+  id             Int              @id @default(autoincrement())
+  name           String
+  menuItems      MenuItems[]
+  inventoryItems InventoryItems[]
+  categoryTypes  CategoryType[]
+  Restaurant     Restaurant?      @relation(fields: [restaurantId], references: [id])
+  restaurantId   Int?
 }
 
 model CategoryType {
-  id       Int        @id @default(autoincrement())
-  name     String
-  category Category[] @relation("CategoryToCategoryType")
-
-  MenuItems MenuItems[]
-
-  InventoryItems InventoryItems[]
+  id             Int              @id @default(autoincrement())
+  name           String
+  category       Category         @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+  menuItems      MenuItems[]
+  inventoryItems InventoryItems[]
 }

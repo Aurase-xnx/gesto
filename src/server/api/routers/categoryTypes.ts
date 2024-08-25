@@ -76,5 +76,27 @@ export const categoryTypesRouter = createTRPCRouter({
         return category?.categoryTypes || [];  // Return only the category types array
     }),
     
+    update: protectedProcedure
+    .input(
+        z.object({
+            id: z.number(),
+            name: z.string().min(1),
+        }),
+    )
+    .mutation(async ({ ctx, input }) => {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return ctx.db.category.update({
+            where: { id: input.id },
+            data: { name: input.name },
+        });
+    }),
 
+    delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return ctx.db.category.delete({
+            where: { id: input.id },
+        });
+    }),
 });

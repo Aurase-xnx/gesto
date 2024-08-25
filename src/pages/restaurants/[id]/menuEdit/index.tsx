@@ -8,7 +8,7 @@ const AddMenuItem = () => {
   const restaurantId = restaurantIdString ? parseInt(restaurantIdString as string, 10) : null;
   console.log('Restaurant ID:', restaurantId);
 
-  const { data: categories } = api.categories.getAll.useQuery();
+  const { data: categories } = api.categories.getCategoryByRestaurant.useQuery({ restaurantId: restaurantId || 0 });
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
   
   const { data: types } = api.categoryTypes.getByCategory.useQuery(
@@ -48,9 +48,15 @@ const AddMenuItem = () => {
     }
   };
 
+  const handleCategoryEdit = async () => {
+    router.push(`/restaurants/${restaurantId}/categoryEdit`);
+  }
+
   return (
     <div>
       <h1>Add Menu Item</h1>
+
+      <button onClick={handleCategoryEdit}>Edit categories and types</button>
 
       <form onSubmit={handleSubmit}>
         <label htmlFor="name">Name</label>
