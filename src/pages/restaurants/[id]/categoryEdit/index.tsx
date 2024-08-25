@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { api } from "$/utils/api";
 import { useRouter } from "next/router";
+import { cp } from "fs";
 
 export default function CategoryEdit() {
     const router = useRouter();
@@ -9,164 +10,151 @@ export default function CategoryEdit() {
     if (typeof idParam !== 'string') {
         return <div>Error: Invalid restaurant ID</div>;
     }
-    
-    const id = parseInt(idParam, 10); 
+    const restaurantId = parseInt(idParam, 10); 
 
-    const { data: categories , refetch} = api.categories.getCategoryByRestaurant.useQuery({ restaurantId: id });
-    const { mutate: createCategory } = api.categories.create.useMutation({
-        onSuccess: () => refetch(), // Refetch categories after creating a new one
-    });
-
-    const { mutate: updateCategory } = api.categories.updateCategoryById.useMutation({
-        onSuccess: () => refetch(), // Refetch categories after updating
-      });
-      
-    const { mutate: deleteCategory } = api.categories.deleteCategoryById.useMutation({
-    onSuccess: () => refetch(), // Refetch categories after deleting
-    });
-    const { mutate: createType } = api.categoryTypes.create.useMutation({
-        onSuccess: () => refetch(), // Refetch categories after creating a new type
-    });
-
-    const { mutate: updateType } = api.categoryTypes.update.useMutation({
-    onSuccess: () => refetch(), // Refetch categories after updating a type
-    });
-
-    const { mutate: deleteType } = api.categoryTypes.delete.useMutation({
-    onSuccess: () => refetch(), // Refetch categories after deleting a type
-    });
-
-    const [newCategoryName, setNewCategoryName] = useState('');
-  const [newTypeName, setNewTypeName] = useState('');
-
-  // State to handle editing
-  const [editingCategory, setEditingCategory] = useState<number | null>(null);
-  const [editingCategoryName, setEditingCategoryName] = useState('');
-  const [editingType, setEditingType] = useState<{ categoryId: number; typeId: number | null }>({ categoryId: 0, typeId: null });
-  const [editingTypeName, setEditingTypeName] = useState('');
+    const { data: categories, refetch } = api.categories.getCategoryWithTypesByRestaurant.useQuery({ restaurantId });
+  const createCategory = api.categories.createCategory.useMutation();
+  const updateCategory = api.categories.updateCategory.useMutation();
+  const deleteCategory = api.categories.deleteCategoryAndTypes.useMutation();
+  const createCategoryType = api.categories.createCategoryType.useMutation();
+  const updateCategoryType = api.categories.updateCategoryType.useMutation();
+  const deleteCategoryType = api.categories.deleteCategoryType.useMutation();
 
 
-  const handleCreateCategory = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCategoryName.trim()) return;
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [editingCategoryId, setEditingCategoryId] = useState<number | null>(null);
+  const [editedCategoryName, setEditedCategoryName] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [newCategoryTypeName, setNewCategoryTypeName] = useState<{ [key: number]: string }>({});
+  const [editingCategoryTypeId, setEditingCategoryTypeId] = useState<number | null>(null);
+  const [editedCategoryTypeName, setEditedCategoryTypeName] = useState('');
+  const [showTypeInput, setShowTypeInput] = useState<{ [key: number]: boolean }>({});
 
-    createCategory({ name: newCategoryName, restaurant: id });
-    setNewCategoryName(''); // Clear input after submission
+  const handleCreateCategory = async () => {
+    await createCategory.mutateAsync({ name: newCategoryName, restaurantId });
+    setNewCategoryName('');
+    refetch();
   };
 
-  // Handle creating a new type
-  const handleCreateType = (categoryId: number) => {
-    if (!newTypeName.trim()) return;
-
-    createType({ name: newTypeName, restaurant: id });
-    setNewTypeName(''); // Clear input after submission
+  const handleUpdateCategory = async (id: number, name: string) => {
+    await updateCategory.mutateAsync({ id, name });
+    setEditingCategoryId(null);
+    refetch();
   };
 
-  // Handle editing a category
-  const handleUpdateCategory = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingCategory && editingCategoryName.trim()) {
-      updateCategory({ id: editingCategory, name: editingCategoryName });
-      setEditingCategory(null);
-      setEditingCategoryName('');
+  const handleDeleteCategory = async (id: number) => {
+    await deleteCategory.mutateAsync({ id });
+    refetch();
+  };
+
+  const handleCreateCategoryType = async (categoryId: number) => {
+    const typeName = newCategoryTypeName[categoryId];
+    if (typeName) {
+      await createCategoryType.mutateAsync({ name: typeName, categoryId });
+      setNewCategoryTypeName({ ...newCategoryTypeName, [categoryId]: '' });
+      setShowTypeInput({ ...showTypeInput, [categoryId]: false });
+      refetch();
     }
   };
 
-  // Handle editing a type
-  const handleUpdateType = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingType.typeId && editingTypeName.trim()) {
-      updateType({ id: editingType.typeId, name: editingTypeName });
-      setEditingType({ categoryId: 0, typeId: null });
-      setEditingTypeName('');
-    }
+  const handleUpdateCategoryType = async (id: number, name: string) => {
+    await updateCategoryType.mutateAsync({ id, name });
+    setEditingCategoryTypeId(null);
+    refetch();
   };
 
-  // Handle category edit
-  const startEditing = (categoryId: number, categoryName: string) => {
-    setEditingCategory(categoryId);
-    setEditingCategoryName(categoryName);
+  const handleDeleteCategoryType = async (id: number) => {
+    await deleteCategoryType.mutateAsync({ id });
+    refetch();
   };
+
+  // Sorting categories alphabetically
+  const sortedCategories = categories?.sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div>
-      <h1>Manage Categories and Types</h1>
-
-      {/* Form to create a new category */}
-      <form onSubmit={handleCreateCategory}>
-        <label htmlFor="new-category-name">New Category</label>
+      <h1>Manage Categories</h1>
+      <div>
         <input
           type="text"
-          id="new-category-name"
+          placeholder="New Category Name"
           value={newCategoryName}
           onChange={(e) => setNewCategoryName(e.target.value)}
         />
-        <button type="submit">Create Category</button>
-      </form>
+        <button onClick={handleCreateCategory}>Create Category</button>
+      </div>
 
-      {/* Display list of categories and their types */}
-      <h2>Existing Categories</h2>
-      <ul>
-        {categories?.map((category) => (
-          <li key={category.id}>
-            {/* Category */}
-            {editingCategory === category.id ? (
-              <form onSubmit={handleUpdateCategory}>
+      <div style={{ display: 'flex', gap: '20px', marginTop: '20px' }}>
+        {sortedCategories?.map((category) => (
+          <div key={category.id} style={{ flex: '1', textAlign: 'center' }}>
+            {/* Category Editing */}
+            {editingCategoryId === category.id ? (
+              <>
                 <input
                   type="text"
-                  value={editingCategoryName}
-                  onChange={(e) => setEditingCategoryName(e.target.value)}
+                  value={editedCategoryName}
+                  onChange={(e) => setEditedCategoryName(e.target.value)}
                 />
-                <button type="submit">Save</button>
-                <button type="button" onClick={() => setEditingCategory(null)}>Cancel</button>
-              </form>
+                <button onClick={() => handleUpdateCategory(category.id, editedCategoryName)}>Save</button>
+                <button onClick={() => setEditingCategoryId(null)}>Cancel</button>
+              </>
             ) : (
               <>
-                <span>{category.name}</span>
-                <button onClick={() => { setEditingCategory(category.id); setEditingCategoryName(category.name); }}>Edit</button>
-                <button onClick={() => deleteCategory({ id: category.id })}>Delete</button>
+                <div>
+                  <span>{category.name}</span>
+                  <button onClick={() => { setEditingCategoryId(category.id); setEditedCategoryName(category.name); }}>
+                    Edit
+                  </button>
+                  <button onClick={() => handleDeleteCategory(category.id)}>Delete</button>
+                </div>
               </>
             )}
 
-            {/* Types associated with the category */}
-            <ul>
-              {categoryTypes?.map((type) => (
+            {/* Category Types List */}
+            <ul style={{ listStyleType: 'none', padding: 0 }}>
+              {category.categoryTypes.map((type) => (
                 <li key={type.id}>
-                  {editingType.typeId === type.id ? (
-                    <form onSubmit={handleUpdateType}>
+                  {editingCategoryTypeId === type.id ? (
+                    <>
                       <input
                         type="text"
-                        value={editingTypeName}
-                        onChange={(e) => setEditingTypeName(e.target.value)}
+                        value={editedCategoryTypeName}
+                        onChange={(e) => setEditedCategoryTypeName(e.target.value)}
                       />
-                      <button type="submit">Save</button>
-                      <button type="button" onClick={() => setEditingType({ categoryId: 0, typeId: null })}>Cancel</button>
-                    </form>
+                      <button onClick={() => handleUpdateCategoryType(type.id, editedCategoryTypeName)}>Save</button>
+                      <button onClick={() => setEditingCategoryTypeId(null)}>Cancel</button>
+                    </>
                   ) : (
                     <>
                       <span>{type.name}</span>
-                      <button onClick={() => setEditingType({ categoryId: category.id, typeId: type.id }) || setEditingTypeName(type.name)}>Edit</button>
-                      <button onClick={() => deleteType({ id: type.id })}>Delete</button>
+                      <button onClick={() => { setEditingCategoryTypeId(type.id); setEditedCategoryTypeName(type.name); }}>
+                        Edit
+                      </button>
+                      <button onClick={() => handleDeleteCategoryType(type.id)}>Delete</button>
                     </>
                   )}
                 </li>
               ))}
             </ul>
 
-            {/* Form to add a new type to this category */}
-            <form onSubmit={(e) => { e.preventDefault(); handleCreateType(category.id); }}>
-              <input
-                type="text"
-                value={newTypeName}
-                onChange={(e) => setNewTypeName(e.target.value)}
-                placeholder="New Type Name"
-              />
-              <button type="submit">Add Type</button>
-            </form>
-          </li>
+            {/* Add New Category Type */}
+            {showTypeInput[category.id] ? (
+              <div>
+                <input
+                  type="text"
+                  placeholder="New Category Type Name"
+                  value={newCategoryTypeName[category.id] || ''}
+                  onChange={(e) => setNewCategoryTypeName({ ...newCategoryTypeName, [category.id]: e.target.value })}
+                />
+                <button onClick={() => handleCreateCategoryType(category.id)}>Add</button>
+                <button onClick={() => setShowTypeInput({ ...showTypeInput, [category.id]: false })}>Cancel</button>
+              </div>
+            ) : (
+              <button onClick={() => setShowTypeInput({ ...showTypeInput, [category.id]: true })}>+</button>
+            )}
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };
-

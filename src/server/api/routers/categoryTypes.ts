@@ -33,11 +33,6 @@ export const categoryTypesRouter = createTRPCRouter({
     }
     ),
 
-    getAll: publicProcedure
-    .query(async ({ ctx }) => {
-        return ctx.db.category.findMany();
-    }
-    ),
     getTypes: publicProcedure
     .query(async ({ ctx }) => {
         return ctx.db.categoryType.findMany();
@@ -47,13 +42,9 @@ export const categoryTypesRouter = createTRPCRouter({
     getByCategory: publicProcedure
     .input(z.object({ categoryId: z.number() }))
     .query(async ({ input, ctx }) => {
-        const category = await ctx.db.category.findUnique({
-            where: { id: input.categoryId },
-            include: {
-                categoryTypes: true,
-            },
+        return ctx.db.categoryType.findMany({
+            where: { categoryId: input.categoryId },
         });
-        return category?.categoryTypes || [];  // Return only the category types array
     }),
     
     update: protectedProcedure
