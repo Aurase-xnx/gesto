@@ -55,10 +55,14 @@ export default function Restaurant() {
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
 
+    const handleMenuEdit = () => {
+        router.push(`/restaurants/${id}/menuEdit`);
+    }
+
     return (
         <div className="p-20">
             <h1>Manage Restaurant</h1>
-            <button>Edit the menu</button>
+            <button className="btn" onClick={handleMenuEdit} >Edit the menu</button>
             <button>Edit the restaurant</button>
             <button>Inventory</button>
         </div>

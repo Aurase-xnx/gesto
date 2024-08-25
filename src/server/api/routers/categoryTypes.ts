@@ -8,7 +8,7 @@ import {
 import { get } from "http";
 import { create } from "domain";
 
-export const categoriesRouter = createTRPCRouter({
+export const categoryTypesRouter = createTRPCRouter({
 
     create: protectedProcedure
     .input(
@@ -58,46 +58,23 @@ export const categoriesRouter = createTRPCRouter({
         return ctx.db.category.findMany();
     }
     ),
+    getTypes: publicProcedure
+    .query(async ({ ctx }) => {
+        return ctx.db.categoryType.findMany();
+    }
+    ),
 
-    getCategoryById: publicProcedure
-    .input(z.object({ id: z.number() }))
+    getByCategory: publicProcedure
+    .input(z.object({ categoryId: z.number() }))
     .query(async ({ input, ctx }) => {
         const category = await ctx.db.category.findUnique({
-            where: { id: input.id },
-        });
-
-        if (!category) {
-            throw new Error("Category not found");
-        }
-
-        return category;
-    }),
-
-    updateCategoryById: protectedProcedure
-    .input(
-        z.object({
-            id: z.number(),
-            name: z.string().min(1),
-        }),
-    )
-    .mutation(async ({ ctx, input }) => {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        return ctx.db.category.update({
-            where: { id: input.id },
-            data: {
-                name: input.name,
+            where: { id: input.categoryId },
+            include: {
+                categoryTypes: true,
             },
         });
+        return category?.categoryTypes || [];  // Return only the category types array
     }),
+    
 
-    deleteCategoryById: protectedProcedure
-    .input(z.object({ id: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        return ctx.db.category.delete({
-            where: { id: input.id },
-        });
-    }),
-    
-    
 });
