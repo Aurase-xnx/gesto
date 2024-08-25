@@ -86,4 +86,85 @@ export const categoriesRouter = createTRPCRouter({
             where: { Restaurant: { id: input.restaurantId } },
         });
     }),
+
+    getCategoryWithTypesByRestaurant: protectedProcedure
+    .input(z.object({ restaurantId: z.number() }))
+    .query(async ({ input, ctx }) => {
+      return ctx.db.category.findMany({
+        where: { restaurantId: input.restaurantId },
+        include: { categoryTypes: true },
+      });
+    }),
+
+  createCategory: protectedProcedure
+    .input(z.object({
+      name: z.string(),
+      restaurantId: z.number(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.category.create({
+        data: {
+          name: input.name,
+          restaurantId: input.restaurantId,
+        },
+      });
+    }),
+
+  updateCategory: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.category.update({
+        where: { id: input.id },
+        data: { name: input.name },
+      });
+    }),
+
+  createCategoryType: protectedProcedure
+    .input(z.object({
+      name: z.string(),
+      categoryId: z.number(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.categoryType.create({
+        data: {
+          name: input.name,
+          categoryId: input.categoryId,
+        },
+      });
+    }),
+
+  updateCategoryType: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      name: z.string(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.categoryType.update({
+        where: { id: input.id },
+        data: { name: input.name },
+      });
+    }),
+
+  deleteCategoryAndTypes: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      await ctx.db.categoryType.deleteMany({
+        where: { categoryId: input.id },
+      });
+      return ctx.db.category.delete({
+        where: { id: input.id },
+      });
+    }),
+
+  deleteCategoryType: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      return ctx.db.categoryType.delete({
+        where: { id: input.id },
+      });
+    }),
+
 });
