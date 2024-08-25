@@ -19,7 +19,7 @@ export const menuItemsRouter = createTRPCRouter({
                 description: z.string().optional().default(""),
                 restaurantId: z.number(),
                 categoryId: z.number(),
-                typeId: z.number().optional(),
+                categoryTypeId: z.number(),
             }),
         )
         .mutation(async ({ ctx, input }) => {
@@ -31,7 +31,7 @@ export const menuItemsRouter = createTRPCRouter({
                     description: input.description,
                     restaurantId: input.restaurantId,
                     categoryId: input.categoryId, 
-                    typeId: input.typeId,
+                    categoryTypeId: input.categoryTypeId,
                 },
             });
         }),

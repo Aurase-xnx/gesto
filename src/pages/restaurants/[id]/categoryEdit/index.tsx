@@ -9,7 +9,7 @@ export default function CategoryEdit() {
     if (typeof idParam !== 'string') {
         return <div>Error: Invalid restaurant ID</div>;
     }
-
+    
     const id = parseInt(idParam, 10); 
 
     const { data: categories , refetch} = api.categories.getCategoryByRestaurant.useQuery({ restaurantId: id });

@@ -15,43 +15,23 @@ export const categoriesRouter = createTRPCRouter({
       z.object({
         id: z.number().optional(),
         name: z.string().min(1),
-        restaurant: z.number(),
-        categoryTypeId: z.number().optional(), // For linking an existing categoryType
-        categoryTypeName: z.string().min(1).optional(), // For creating a new categoryType
+        restaurant: z.number(), // For creating a new categoryType
       }),
     )
     .mutation(async ({ ctx, input }) => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-      let categoryTypeId = input.categoryTypeId;
-  
-      if (!categoryTypeId && input.categoryTypeName) {
-        const newCategoryType = await ctx.db.categoryType.create({
-          data: {
-            name: input.categoryTypeName,
-          },
-        });
-        categoryTypeId = newCategoryType.id;
-      }
-  
       return ctx.db.category.create({
-        data: {
-          name: input.name,
-          restaurant: {
-            connect: {
-              id: input.restaurant,
-            },
+      data: {
+        name: input.name,
+        Restaurant: {
+          connect: {
+            id: input.restaurant,
           },
-          categoryTypes: categoryTypeId
-            ? {
-                connect: {
-                  id: categoryTypeId,
-                },
-              }
-            : undefined,
         },
-      });
-    }),
+      },
+    });
+  }
+  ),
 
     getAll: publicProcedure
     .query(async ({ ctx }) => {
@@ -103,7 +83,7 @@ export const categoriesRouter = createTRPCRouter({
     .input(z.object({ restaurantId: z.number() }))
     .query(async ({ input, ctx }) => {
         return ctx.db.category.findMany({
-            where: { restaurant: { id: input.restaurantId } },
+            where: { Restaurant: { id: input.restaurantId } },
         });
     }),
 });

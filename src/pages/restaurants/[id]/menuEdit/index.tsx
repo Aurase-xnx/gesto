@@ -35,7 +35,7 @@ const AddMenuItem = () => {
       description: formData.get('description') as string,
       price: Number(formData.get('price')),
       categoryId: Number(formData.get('category')),
-      typeId: Number(formData.get('type')),
+      categoryTypeId: Number(formData.get('type')),
       restaurantId: restaurantId,
     };
 

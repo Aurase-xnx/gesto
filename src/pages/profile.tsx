@@ -22,7 +22,7 @@ const Profile = () => {
 
     const {data: createdRestaurant, mutate: createRestaurant} = api.restaurant.create.useMutation();
     const {data: updatedOwner, mutate: updateOwner} = api.user.updateRoleToOwner.useMutation();
-    const {data: getRestaurantsByOwner} = api.restaurant.getAllByOwner.useQuery();
+    const {data: getRestaurantsByOwner, refetch } = api.restaurant.getAllByOwner.useQuery();
 
     type Restaurant = {
         id: number;
@@ -36,6 +36,8 @@ const Profile = () => {
             const response = createRestaurant(data);
             if (createdRestaurant) {
                 updateOwner({id: session?.user?.id!});
+                setShowForm(false);
+                refetch();
             }
         } catch (error) {
             console.error(error);

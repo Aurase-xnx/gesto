@@ -12,46 +12,26 @@ export const categoryTypesRouter = createTRPCRouter({
 
     create: protectedProcedure
     .input(
-      z.object({
-        id: z.number().optional(),
-        name: z.string().min(1),
-        restaurant: z.number(),
-        categoryTypeId: z.number().optional(), // For linking an existing categoryType
-        categoryTypeName: z.string().min(1).optional(), // For creating a new categoryType
-      }),
+        z.object({
+            id: z.number().optional(),
+            name: z.string().min(1),
+            category: z.number(), // For creating a new categoryType
+        }),
     )
     .mutation(async ({ ctx, input }) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-      let categoryTypeId = input.categoryTypeId;
-  
-      if (!categoryTypeId && input.categoryTypeName) {
-        const newCategoryType = await ctx.db.categoryType.create({
-          data: {
-            name: input.categoryTypeName,
-          },
-        });
-        categoryTypeId = newCategoryType.id;
-      }
-  
-      return ctx.db.category.create({
-        data: {
-          name: input.name,
-          restaurant: {
-            connect: {
-              id: input.restaurant,
-            },
-          },
-          categoryTypes: categoryTypeId
-            ? {
-                connect: {
-                  id: categoryTypeId,
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return ctx.db.categoryType.create({
+            data: {
+                name: input.name,
+                category: {
+                    connect: {
+                        id: input.category,
+                    },
                 },
-              }
-            : undefined,
-        },
-      });
-    }),
+            },
+        });
+    }
+    ),
 
     getAll: publicProcedure
     .query(async ({ ctx }) => {
