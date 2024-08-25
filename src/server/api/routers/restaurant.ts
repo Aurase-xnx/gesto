@@ -12,7 +12,7 @@ export const restaurantRouter = createTRPCRouter({
     create: protectedProcedure
         .input(
             z.object({
-                id: z.number(),
+                id: z.number().optional(),
                 name: z.string().min(1),
                 address: z.string().min(1),
                 phone: z.string().min(1),
@@ -21,7 +21,8 @@ export const restaurantRouter = createTRPCRouter({
         .mutation(async ({ ctx, input }) => {
             // simulate a slow db call
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            return ctx.db.restaurant.create({
+
+            const createdRestaurant = await ctx.db.restaurant.create({
                 data: {
                     name: input.name,
                     address: input.address,
@@ -29,8 +30,19 @@ export const restaurantRouter = createTRPCRouter({
                     ownerId: ctx.session.user.id,
                 },
             });
-        }),
 
+            // Update the user's role to OWNER after creating the restaurant
+            await ctx.db.user.update({
+                where: {
+                    id: ctx.session.user.id,
+                },
+                data: {
+                    role: "OWNER"
+                },
+            });
+
+            return createdRestaurant;
+        }),
         getAll: publicProcedure
         .query(async ({ ctx }) => {
             return ctx.db.restaurant.findMany();

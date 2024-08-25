@@ -1,3 +1,5 @@
+// Prisma schema for the database
+// Setting up the database schema for the application
 generator client {
   provider = "prisma-client-js"
 }
@@ -27,15 +29,6 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-// User model with role and employeeType
 model User {
   id            String        @id @default(cuid())
   name          String?
@@ -50,54 +43,12 @@ model User {
   Bookings      Bookings[]
 }
 
-model MenuItem {
-  id           Int        @id @default(autoincrement())
-  name         String
-  description  String
-  price        Float
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-  restaurantId Int
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-}
-
-model Bookings {
-  id           Int        @id @default(autoincrement())
-  date         DateTime
-  time         String
-  partySize    Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-  restaurantId Int
-  user         User       @relation(fields: [userId], references: [id])
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
   userId       String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-}
-
-model inventoryItems {
-  id           Int        @id @default(autoincrement())
-  name         String
-  description  String
-  quantity     Int
-  price        Float
-  restaurantId Int
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
-}
-
-model Restaurant {
-  id             Int              @id @default(autoincrement())
-  name           String
-  address        String
-  phone          String
-  owner          User             @relation(fields: [ownerId], references: [id])
-  ownerId        String
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  menuItems      MenuItem[]
-  bookings       Bookings[]
-  inventoryItems inventoryItems[]
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -119,4 +70,86 @@ enum EmployeeType {
   WAITER
   BARMAN
   COOK
+}
+
+//Models for the restaurant
+
+model Restaurant {
+  id             Int              @id @default(autoincrement())
+  name           String
+  address        String
+  phone          String
+  owner          User             @relation(fields: [ownerId], references: [id])
+  ownerId        String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now()) @updatedAt
+  bookings       Bookings[]
+  menuItems      MenuItem[]
+  inventoryItems inventoryItems[]
+  categories     Category[]
+}
+
+model Bookings {
+  id           Int        @id @default(autoincrement())
+  date         DateTime
+  time         String
+  partySize    Int
+  request      String?
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId Int
+  user         User       @relation(fields: [userId], references: [id])
+  userId       String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now()) @updatedAt
+}
+
+model inventoryItems {
+  id           Int            @id @default(autoincrement())
+  name         String
+  description  String?
+  quantity     Int
+  price        Float
+  category     Category       @relation(fields: [categoryId], references: [id])
+  categoryId   Int
+  categoryType CategoryType[] @relation("CategoryTypeMenuItems")
+  restaurantId Int
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
+  restaurant   Restaurant     @relation(fields: [restaurantId], references: [id])
+}
+
+model MenuItem {
+  id           Int            @id @default(autoincrement())
+  name         String
+  description  String?
+  price        Float
+  category     Category       @relation(fields: [categoryId], references: [id])
+  categoryId   Int
+  categoryType CategoryType[] @relation("CategoryTypeMenuItems")
+  restaurant   Restaurant     @relation(fields: [restaurantId], references: [id])
+  restaurantId Int
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @default(now()) @updatedAt
+}
+
+model CategoryType {
+  id         Int        @id @default(autoincrement())
+  name       String
+  category   Category   @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  menuItems  MenuItem[] @relation("CategoryTypeMenuItems")
+
+  inventoryItems inventoryItems[] @relation("CategoryTypeMenuItems")
+}
+
+model Category {
+  id             Int              @id @default(autoincrement())
+  name           String
+  restaurantId   Int
+  restaurant     Restaurant       @relation(fields: [restaurantId], references: [id])
+  menuItems      MenuItem[]
+  inventoryItems inventoryItems[]
+  categoryTypes  CategoryType[]
+
+  @@unique([name, restaurantId])
 }

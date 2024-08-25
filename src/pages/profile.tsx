@@ -134,6 +134,7 @@ const Profile = () => {
                                 {getRestaurantsByOwner.map((restaurant: Restaurant) => (
                                     <RestaurantOwnerCard 
                                     key={restaurant.id}
+                                    id={restaurant.id}
                                     name={restaurant.name}
                                     address={restaurant.address}
                                     phoneNumber={restaurant.phone}/>

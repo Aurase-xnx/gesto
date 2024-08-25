@@ -58,39 +58,9 @@ export default function Restaurant() {
     return (
         <div className="p-20">
             <h1>Manage Restaurant</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>
-                        Name:
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Address:
-                        <input
-                            type="text"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Phone:
-                        <input
-                            type="text"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                        />
-                    </label>
-                </div>
-                <button type="submit">Save Changes</button>
-            </form>
+            <button>Edit the menu</button>
+            <button>Edit the restaurant</button>
+            <button>Inventory</button>
         </div>
     );
 }
