@@ -59,11 +59,15 @@ export default function Restaurant() {
         router.push(`/restaurants/${id}/menuEdit`);
     }
 
+    const handleRestaurantEdit = () => {
+        router.push(`/restaurants/${id}/restaurantEdit`);
+    }
+
     return (
         <div>
             <h1>Manage Restaurant</h1>
             <button className="btn" onClick={handleMenuEdit} >Edit the menu</button>
-            <button>Edit the restaurant</button>
+            <button className="btn" onClick={handleRestaurantEdit} >Edit the restaurant</button>
             <button>Inventory</button>
         </div>
     );
