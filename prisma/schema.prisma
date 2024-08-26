@@ -79,6 +79,7 @@ model Restaurant {
   name      String
   address   String
   phone     String
+  capacity  Int?
   owner     User       @relation(fields: [ownerId], references: [id])
   ownerId   String
   createdAt DateTime   @default(now())

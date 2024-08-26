@@ -70,6 +70,7 @@ export const restaurantRouter = createTRPCRouter({
             name: z.string().min(1),
             address: z.string().min(1),
             phone: z.string().min(1),
+            capacity: z.number().optional(),
             }),
         )
 
@@ -81,6 +82,7 @@ export const restaurantRouter = createTRPCRouter({
                 name: input.name,
                 address: input.address,
                 phone: input.phone,
+                capacity: input.capacity,
             },
         });
     }

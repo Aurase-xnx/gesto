@@ -25,9 +25,10 @@ export default function Restaurant() {
                         <h2>{restaurant.name}</h2>
                         <p>{restaurant.address}</p>
                         <p>{restaurant.phone}</p>
+                        <p>Capacity: {restaurant.capacity}</p>
                     </div>
                 ) : (
-                    <p>{id}</p>
+                    <p>This restaurant does not exist !</p>
                 )}
                 </div>
         </div>
