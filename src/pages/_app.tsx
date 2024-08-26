@@ -15,7 +15,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
         <Navbar />
-      <div className="p-20 font-sans ${inter.variable} bg-gradient-to-b from-[#1d232a] to-[#a6f7a6] h-screen w-full">
+      <div className="p-20 font-sans ${inter.variable} bg-gradient-to-b from-[#1d232a] to-[#a6f7a6] w-full min-h-screen	">
         <Component {...pageProps} />
       </div>
     </SessionProvider>

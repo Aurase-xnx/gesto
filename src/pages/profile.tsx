@@ -55,7 +55,7 @@ const Profile = () => {
     }
 
     return (
-        <div className="container mx-auto p-20">
+        <div className="container mx-auto">
             <h1 className="text-3xl font-bold mb-6">Profile Page</h1>
             <p className="mb-4">Welcome, {session.user?.name}!</p>
 

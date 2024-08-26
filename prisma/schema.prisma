@@ -107,33 +107,33 @@ model Bookings {
 // Models for the restaurant menu and inventory
 
 model MenuItems {
-  id             Int          @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   name           String
   description    String?
   price          Float
-  restaurant     Restaurant?  @relation(fields: [restaurantId], references: [id])
+  restaurant     Restaurant?   @relation(fields: [restaurantId], references: [id])
   restaurantId   Int
-  category       Category     @relation(fields: [categoryId], references: [id])
+  category       Category      @relation(fields: [categoryId], references: [id])
   categoryId     Int
-  categoryType   CategoryType @relation(fields: [categoryTypeId], references: [id])
-  categoryTypeId Int
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @default(now()) @updatedAt
+  categoryType   CategoryType? @relation(fields: [categoryTypeId], references: [id])
+  categoryTypeId Int?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
 }
 
 model InventoryItems {
-  id             Int          @id @default(autoincrement())
+  id             Int           @id @default(autoincrement())
   name           String
   description    String?
   price          Float
-  restaurant     Restaurant?  @relation(fields: [restaurantId], references: [id])
+  restaurant     Restaurant?   @relation(fields: [restaurantId], references: [id])
   restaurantId   Int
-  category       Category     @relation(fields: [categoryId], references: [id])
+  category       Category      @relation(fields: [categoryId], references: [id])
   categoryId     Int
-  categoryType   CategoryType @relation(fields: [categoryTypeId], references: [id])
-  categoryTypeId Int
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @default(now()) @updatedAt
+  categoryType   CategoryType? @relation(fields: [categoryTypeId], references: [id])
+  categoryTypeId Int?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
 }
 
 model Category {
