@@ -60,7 +60,7 @@ export default function Restaurant() {
     }
 
     return (
-        <div className="p-20">
+        <div>
             <h1>Manage Restaurant</h1>
             <button className="btn" onClick={handleMenuEdit} >Edit the menu</button>
             <button>Edit the restaurant</button>

@@ -17,7 +17,7 @@ export default function Restaurant() {
     const { data: restaurant, error, isLoading } = api.restaurant.getRestaurantById.useQuery({ id });
 
     return (
-        <div className="p-20">
+        <div>
             <h1>Restaurant's details</h1>
             <div>
                 {restaurant ? (

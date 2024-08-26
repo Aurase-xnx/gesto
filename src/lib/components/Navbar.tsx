@@ -9,7 +9,7 @@ const Navbar = () => {
 
 
     return (
-        <nav className="p-4 w-full absolute">
+        <nav className="p-4 fixed top-0 w-full z-50">
             <div className="container mx-auto flex justify-between items-center">
 
                 <Link href="/" className="text-[#a6f7a6] text-2xl font-bold">
